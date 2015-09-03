@@ -1,0 +1,237 @@
+[TITLE]
+BMV-TOWN SIMULATION MODEL
+
+[JUNCTIONS]
+;ID              	Elev        	Demand      	Pattern         
+ 2               	86          	0           	                	;
+ 3               	99          	0.38        	                	;
+ 4               	99          	1.72        	                	;
+ 5               	95          	3.67        	                	;
+ 6               	87          	2.98        	                	;
+ 7               	79          	2.98        	                	;
+ 8               	81          	1.22        	                	;
+ 9               	109         	2.75        	                	;
+ 11              	106         	2.27        	                	;
+ 12              	103         	2.04        	                	;
+ 14              	92          	1.22        	                	;
+ 15              	89          	0           	                	;
+ 16              	80          	2.98        	                	;
+ 17              	89          	2.75        	                	;
+ 18              	106         	2.27        	                	;
+ 19              	99          	3.67        	                	;
+ 20              	99          	4.47        	                	;
+ 24              	87          	2.04        	                	;
+ 25              	90          	2.27        	                	;
+ S2              	86          	0           	                	;
+ S1              	86          	0           	                	;
+ D1              	86          	0           	                	;
+ D2              	86          	0           	                	;
+
+[RESERVOIRS]
+;ID              	Head        	Pattern         
+ WTP             	86          	                	;
+
+[TANKS]
+;ID              	Elevation   	InitLevel   	MinLevel    	MaxLevel    	Diameter    	MinVol      	VolCurve
+ Hixon           	135         	1           	1           	6           	17          	0           	                	;
+
+[PIPES]
+;ID              	Node1           	Node2           	Length      	Diameter    	Roughness   	MinorLoss   	Status
+ Pi2             	11              	9               	2071.32     	200         	110         	0           	Open  	;
+ Pi3             	15              	8               	696.45      	200         	110         	0           	Open  	;
+ Pi4             	14              	9               	1292.27     	200         	110         	0           	Open  	;
+ Pi5             	8               	16              	827.05      	200         	110         	0           	Open  	;
+ Pi6             	16              	17              	970.46      	200         	110         	0           	Open  	;
+ Pi7             	16              	7               	786.74      	200         	110         	0           	Open  	;
+ Pi8             	7               	6               	1006.00     	200         	110         	0           	Open  	;
+ Pi9             	6               	5               	907.52      	200         	110         	0           	Open  	;
+ Pi10            	5               	4               	1066.81     	200         	110         	0           	Open  	;
+ Pi11            	4               	3               	1033.99     	200         	110         	0           	Open  	;
+ Pi12            	3               	12              	526.08      	200         	110         	0           	Open  	;
+ Pi13            	12              	18              	306.88      	200         	110         	0           	Open  	;
+ Pi16            	19              	5               	801.86      	150         	100         	0           	Open  	;
+ Pi17            	17              	6               	817.99      	150         	100         	0           	Open  	;
+ Pi20            	9               	20              	1014.37     	150         	100         	0           	Open  	;
+ Pi24            	4               	20              	909.19      	300         	120         	0           	Open  	;
+ Pi25            	12              	24              	815.89      	150         	100         	0           	Open  	;
+ 26              	25              	24              	250.74      	150         	100         	0           	Open  	;
+ S1              	WTP             	S1              	50          	500         	1000        	0           	Open  	;
+ S2              	WTP             	S2              	50          	500         	1000        	0           	Open  	;
+ Tr1             	Hixon           	18              	432.03      	500         	120         	0           	Open  	;
+ Tr2             	18              	25              	824.24      	500         	120         	0           	Open  	;
+ Tr5             	20              	19              	681.42      	500         	120         	0           	Open  	;
+ Tr6             	19              	17              	1053.81     	500         	120         	0           	Open  	;
+ Tr7             	17              	14              	820.24      	500         	120         	0           	Open  	;
+ Pi42            	14              	15              	332.45      	500         	120         	0           	Open  	;
+ Tr8             	15              	2               	2328.65     	500         	120         	0           	Open  	;
+ Pi1             	D2              	2               	50          	500         	1000        	0           	Open  	;
+ Pi18            	D1              	2               	50          	500         	1000        	0           	Open  	;
+ Tr3             	20              	25              	1000        	500         	120         	0           	Open  	;
+ Pi14            	11              	18              	1000        	200         	110         	0           	Open  	;
+
+[PUMPS]
+;ID              	Node1           	Node2           	Parameters
+ P1              	S1              	D1              	HEAD Curve1	;
+ P2              	S2              	D2              	HEAD Curve1	;
+
+[VALVES]
+;ID              	Node1           	Node2           	Diameter    	Type	Setting     	MinorLoss   
+
+[TAGS]
+
+[DEMANDS]
+;Junction        	Demand      	Pattern         	Category
+
+[STATUS]
+;ID              	Status/Setting
+
+[PATTERNS]
+;ID              	Multipliers
+;; 24 hour daily simulation demand pattern
+ daily           	0.558       	0.577       	0.597       	0.577       	0.597       	0.770       
+ daily           	0.963       	1.203       	1.174       	1.165       	1.174       	1.107       
+ daily           	1.059       	1.011       	1.011       	1.059       	1.107       	1.165       
+ daily           	1.204       	1.165       	1.127       	0.963       	0.770       	0.587       
+;; 168-hour single week (hourly) simulation demand pattern
+
+;; 8760 hours (1 year) hourly simulation demand pattern
+
+[CURVES]
+;ID              	X-Value     	Y-Value
+;PUMP: Pumping Station - Characteristic Curve
+ Curve1          	50          	65          
+
+[CONTROLS]
+
+[RULES]
+RULE 1
+IF TANK Hixon LEVEL ABOVE 6
+THEN PUMP P1 STATUS IS CLOSED
+
+RULE 2
+IF TANK Hixon LEVEL BELOW 2
+THEN PUMP P1 STATUS IS OPEN
+
+RULE 3
+IF TANK Hixon LEVEL ABOVE 5
+THEN PUMP P2 STATUS IS CLOSED
+
+RULE 4
+IF TANK Hixon LEVEL BELOW 2
+THEN PUMP P2 STATUS IS OPEN
+
+[ENERGY]
+ Global Efficiency  	75
+ Global Price       	0
+ Demand Charge      	0
+
+[EMITTERS]
+;Junction        	Coefficient
+
+[QUALITY]
+;Node            	InitQual
+
+[SOURCES]
+;Node            	Type        	Quality     	Pattern
+
+[REACTIONS]
+;Type     	Pipe/Tank       	Coefficient
+
+
+[REACTIONS]
+ Order Bulk            	1
+ Order Tank            	1
+ Order Wall            	1
+ Global Bulk           	0
+ Global Wall           	0
+ Limiting Potential    	0
+ Roughness Correlation 	0
+
+[MIXING]
+;Tank            	Model
+
+[TIMES]
+ Duration           	24
+ Hydraulic Timestep 	1:00
+ Quality Timestep   	0:05
+ Pattern Timestep   	1:00
+ Pattern Start      	0:00
+ Report Timestep    	1:00
+ Report Start       	0:00
+ Start ClockTime    	12 am
+ Statistic          	None
+
+[REPORT]
+ Status             	No
+ Summary            	No
+ Page               	0
+
+[OPTIONS]
+ Units              	LPS
+ Headloss           	H-W
+ Specific Gravity   	1
+ Viscosity          	1
+ Trials             	40
+ Accuracy           	0.001
+ CHECKFREQ          	2
+ MAXCHECK           	10
+ DAMPLIMIT          	0
+ Unbalanced         	Continue 10
+ Pattern            	1
+ Demand Multiplier  	1.0
+ Emitter Exponent   	0.5
+ Quality            	None mg/L
+ Diffusivity        	1
+ Tolerance          	0.01
+
+[COORDINATES]
+;Node            	X-Coord         	Y-Coord
+ 2               	3363.85         	6623.91         
+ 3               	7162.62         	10940.23        
+ 4               	6144.65         	10817.24        
+ 5               	5078.56         	10675.59        
+ 6               	4159.84         	10593.95        
+ 7               	3176.11         	10470.25        
+ 8               	3126.49         	8857.59         
+ 9               	5442.11         	9014.72         
+ 11              	7501.35         	9238.01         
+ 12              	7244.98         	10420.63        
+ 14              	4151.98         	8940.29         
+ 15              	3821.18         	8907.21         
+ 16              	3134.76         	9684.60         
+ 17              	4102.36         	9759.03         
+ 18              	7319.41         	10122.91        
+ 19              	5149.56         	9876.87         
+ 20              	5826.67         	9953.37         
+ 24              	6442.79         	10271.77        
+ 25              	6500.68         	10027.80        
+ S2              	2704.72         	6523.91         
+ S1              	2704.72         	6723.91         
+ D1              	3109.54         	6723.91         
+ D2              	3109.54         	6523.91         
+ WTP             	2414.86         	6640.86         
+ Hixon           	7749.46         	10164.26        
+
+[VERTICES]
+;Link            	X-Coord         	Y-Coord
+
+[LABELS]
+;X-Coord           Y-Coord          Label & Anchor Node
+ 2392.21          6377.57          "BMV PUMP STATION"                 
+ 3690.61          7824.83          "REGION TRANSMISSION LINE"                 
+ 4740.90          11074.96         "BMV TOWN"                 
+ 3316.29          9419.60          "IND-2"                 
+ 4465.83          10279.68         "RES-1"                 
+ 4515.45          9642.89          "RES-2"                 
+ 6136.38          9675.97          "RES-4"                 
+ 5301.11          10321.03         "RES-3"                 
+ 6442.38          10738.67         "GRN-SPC"                 
+ 3308.02          10097.74         "IND-1"                 
+
+[BACKDROP]
+ DIMENSIONS     	0.00            	0.00            	11346.52        	11346.52        
+ UNITS          	Meters
+ FILE           	
+ OFFSET         	0.00            	0.00            
+
+[END]

@@ -1,6 +1,2 @@
-# epanet-python
-python wrapper for epanet library
-
-A Python module that permits Epanet toolkit library calls from pure Python programs.
-
-Example2.py is example2.c from toolkit help rewritten in Python as example of epamodule use.
+This document provides an overview of how to interface with the EPANET simulation modelling framework via Python.  The overarching objective is to be able to conduct extended period simulations while simultaneously modifying network parameters (pipe and pump status) and control rules (pump scheduling) and evaluating hydraulic and water quality constraints (nodal pressures, tank levels etc.) in a system optimization framework.
+A python interface module called ‘EN_Mod.py’ has been created which uses the Python Ctypes library to load the EPANET Programmer’s toolkit DLL into memory. This module is essentially a wrapper function that enables easier calls from a pure Python environment and also allows the user to vary input and outputs from the DLL function calls. The wrapper function was built on the development work by OpenWater Analytics ©.
