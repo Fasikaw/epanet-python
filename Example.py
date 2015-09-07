@@ -40,11 +40,11 @@ link_F = np.empty([sim_dur*2,nlinks],dtype=float)
 # Array of daily pump status
 PumpStat = np.empty([sim_dur*2,len(pump_Index)],dtype=int)
 # Master output
-MasterOut = np.empty([sim_dur*2,63])
+MasterOut = np.empty([sim_dur*2,62])
 
 # Launch and Initialise Hydraulic Analysis
 ENopenH()
-ENinitH(0)          # 0 indicates not to write to hydraulics report
+ENinitH(0)          # 0 indicates to not write to hydraulics report
 
 while dt > 0:
     # Compute hydraulics
@@ -62,18 +62,19 @@ while dt > 0:
             # record if pump 2 is turned on
             PumpStat[t,1] = ENgetlinkvalue(index+1,EN_STATUS)
         if index < nnodes:
-            # Get head at node
+            # Get total head at node
             nodal_P[t,index] = ENgetnodevalue(index+1,EN_HEAD)
     # get next timestep
     dt = ENnextH()
     #increment counter
     t += 1
+# Close hydraulics    
 ENcloseH()
 
 # Compile output into Master matrix
-MasterOut[0:t,0] = range(t)
-MasterOut[0:t,1:3] = PumpStat[0:t,0:2]
-MasterOut[0:t,4:29] = nodal_P[0:t,:]
-MasterOut[0:t,30:63] = link_F[0:t,:]
+MasterOut[0:t,0] = range(t)             # Integer denoting time period
+MasterOut[0:t,1:3] = PumpStat[0:t,:]    # Pump statuses (0 = off, 1 = on)
+MasterOut[0:t,3:28] = nodal_P[0:t,:]    # Nodal pressures (kPa)
+MasterOut[0:t,29:62] = link_F[0:t,:]    # Pipe flowrates (LPS)
 # Write to text file
-np.savetxt('Hyd_summ.txt',MasterOut[0:t,:])    
+np.savetxt('summaryH.txt',MasterOut[0:t,:])    

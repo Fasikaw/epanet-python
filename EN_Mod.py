@@ -25,8 +25,6 @@ _current_simulation_time=  ctypes.c_long()
 # Open/Close Toolkit Operations
 # ============================================================================================================
 def ENopen(inpname, repname='report.txt', binname=''):
-    # Declaration:
-    #     [errcode] =  ENopen( inpname, repname, binname )
     # Description:
     #     Opens the Toolkit to analyze a particular distribution system.
     #     Defines global structure EN_SIZE.
@@ -50,8 +48,6 @@ def ENopen(inpname, repname='report.txt', binname=''):
     return {'nodes':nnodes, 'links':nlinks, 'tanks':ntanks}
 
 def ENclose():
-   # Declaration:
-   #   [errcode]=ENclose()
    # Description:
    #   Closes down the Toolkit system (including all files being processed).
    # Returns:
@@ -65,8 +61,6 @@ def ENclose():
 # Nodal manipulation
 # ============================================================================================================
 def ENgetnodeindex(nodeid):
-   # Declaration:
-   #     [errcode, index] = ENgetnodeindex(id)
    # Description:
    #     Retrieves the index of a node with a specified ID.
    # Arguments:
@@ -82,8 +76,6 @@ def ENgetnodeindex(nodeid):
     return j.value
 
 def ENgetnodeid(index):
-   # Declaration:
-   #    [errcode,id] = ENgetnodeid(index)
    # Description:
    #    Retrieves the ID label of a node with a specified index.
    # Arguments:
@@ -99,9 +91,6 @@ def ENgetnodeid(index):
     return label.value
 
 def ENgetnodetype(index):
-   # Declaration:
-   #    [errcode type] =  ENgetnodetype( int index )
-   # 
    # Description:
    #    Retrieves the node-type code for a specific node.
    # 
@@ -167,9 +156,6 @@ def ENgetnodevalue(index, paramcode):
     return j.value
     
 def ENsetnodevalue(index, paramcode, value):
-   # Declaration:
-   # [errcode] = ENsetnodevalue(index, paramcode, value)
-   # 
    # Description:
    # Sets the value of a parameter for a specific node.
    # 
@@ -394,7 +380,7 @@ def ENsetpatternvalue( index, period, value):
 # Control Rule Manipulation
 # ============================================================================================================
 
-def ENgetcontrol(cindex, ctype, lindex, setting, nindex, level ):
+def ENgetcontrol(cindex):
     # Declaration:
     #     [errcode, ctype,lindex,setting,nindex,level] = ENgetcontrol(cindex)
     # 
@@ -435,11 +421,18 @@ def ENgetcontrol(cindex, ctype, lindex, setting, nindex, level ):
     # For Timer or Time-of-Day controls the nindex parameter equals 0.  
     #
     # See ENsetcontrol for an example of using this function. 
-    errcode= _lib.ENgetcontrol(ctypes.c_int(cindex), ctypes.c_int(ctype), 
-                            ctypes.c_int(lindex), ctypes.c_float(setting), 
-                            ctypes.c_int(nindex), ctypes.c_float(level) )
+    ctype = ctypes.c_int()
+    lindex = ctypes.c_int()
+    setting = ctypes.c_float()
+    nindex = ctypes.c_int()
+    level = ctypes.c_float()
+    
+    errcode= _lib.ENgetcontrol(cindex, ctypes.byref(ctype), 
+                            ctypes.byref(lindex), ctypes.byref(setting), 
+                            ctypes.byref(nindex), ctypes.byref(level))
     if errcode!=0: raise ENtoolkitError(errcode)
-
+    return [ctype.value,lindex.value, setting.value,nindex.value,level.value]
+    
 def ENsetcontrol(cindex, ctype, lindex, setting, nindex, level ):
     # Description:
     #      Sets the parameters of a simple control statement.  
@@ -705,7 +698,6 @@ def ENnextH():
 def ENcloseH():
     # Description:
     # Closes the hydraulic analysis system, freeing all allocated memory.
-    #
     # Notes:
     # Call ENcloseH after all hydraulics analyses have been made using
     # ENinitH - ENrunH - ENnextH. Do not call this function if ENsolveH is being used.
@@ -717,23 +709,24 @@ def ENcloseH():
 # ============================================================================================================
  
 def ENsolveQ():
-    """Runs a complete water quality simulation with results at uniform reporting intervals written to EPANET's binary Output file."""
+    # Description: Runs a complete water quality simulation with results at uniform reporting intervals written 
+    # to EPANET's binary Output file.
     errcode= _lib.ENsolveQ()
     if errcode!=0: raise ENtoolkitError(errcode)
 
 def ENopenQ():
-    """Opens the water quality analysis system"""
+    # Description: Opens the water quality analysis system
     errcode= _lib.ENopenQ()
 
 def ENinitQ(flag=None):
-    """Initializes water quality and the simulation clock time prior to running a water quality analysis.
-
-    flag  EN_NOSAVE | EN_SAVE """
+    # Description: Initializes water quality and the simulation clock time prior to running a water quality analysis.
+    # flag  EN_NOSAVE | EN_SAVE 
     errcode= _lib.ENinitQ(flag)
     if errcode!=0: raise ENtoolkitError(errcode)
 
 def ENrunQ():
-    """Makes available the hydraulic and water quality results that occur at the start of the next time period of a water quality analysis, where the start of the period is returned in t."""
+    # Description: Makes available the hydraulic and water quality results that occur at the start of the next time period 
+    # of a water quality analysis, where the start of the period is returned in t.
     errcode= _lib.ENrunQ(ctypes.byref(_current_simulation_time))
     if errcode>=100: 
       raise ENtoolkitError(errcode)
@@ -741,37 +734,37 @@ def ENrunQ():
       return ENgeterror(errcode)
 
 def ENnextQ():
-    """Advances the water quality simulation to the start of the next hydraulic time period."""
+    # Description: Advances the water quality simulation to the start of the next hydraulic time period.
     _deltat= ctypes.c_long()
     errcode= _lib.ENnextQ(ctypes.byref(_deltat))
     if errcode!=0: raise ENtoolkitError(errcode)
     return _deltat.value
 
 def ENcloseQ():
-    """Closes the water quality analysis system, freeing all allocated memory."""
+    # Description: Closes the water quality analysis system, freeing all allocated memory.
     errcode= _lib.ENcloseQ()
     if errcode!=0: raise ENtoolkitError(errcode)
     
 # ============================================================================================================
 
 def ENsaveH():
-    """Transfers results of a hydraulic simulation from the binary Hydraulics file to the binary
-Output file, where results are only reported at uniform reporting intervals."""
+    # Description: Transfers results of a hydraulic simulation from the binary Hydraulics file to the binary
+    # Output file, where results are only reported at uniform reporting intervals.
     errcode= _lib.ENsaveH()
     if errcode!=0: raise ENtoolkitError(errcode)
 
 def ENsaveinpfile(fname):
-    """Writes all current network input data to a file using the format of an EPANET input file."""
+    # Description: Writes all current network input data to a file using the format of an EPANET input file.
     errcode= _lib.ENsaveinpfile( ctypes.c_char_p(fname))
     if errcode!=0: raise ENtoolkitError(errcode)
 
 def ENreport():
-    """Writes a formatted text report on simulation results to the Report file."""
+    # Description: Writes a formatted text report on simulation results to the Report file.
     errcode= _lib.ENreport()
     if errcode!=0: raise ENtoolkitError(errcode)
 
 def ENgeterror(errcode):
-    """Retrieves the text of the message associated with a particular error or warning code."""
+    # Description: Retrieves the text of the message associated with a particular error or warning code.
     errmsg= ctypes.create_string_buffer(_err_max_char)
     _lib.ENgeterror( errcode,ctypes.byref(errmsg), _err_max_char )
     return errmsg.value
