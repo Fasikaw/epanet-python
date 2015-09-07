@@ -1,7 +1,6 @@
 # ==========================================================
 # Hydraulic Simulation Example 2
-# - Modify Decision variable: pump status at every time-step
-# - Check constraints: nodal pressure
+# - How to collect controls 
 # - using EN_Mod Python-EPANET Interface
 # ===========================================================
 import numpy as np
